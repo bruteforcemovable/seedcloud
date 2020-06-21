@@ -4,11 +4,13 @@ namespace SeedCloud;
 
 use Symfony\Component\Yaml\Yaml;
 
-class ConfigManager {
+class ConfigManager
+{
     private static $configArray = null;
     const CONFIGURATION_FILE_PATH = __DIR__ . '/../config.yaml';
 
-    public static function GetConfiguration($key, $defaultValue = '') {
+    public static function GetConfiguration($key, $defaultValue = '')
+    {
         //Key is dot seperated for levels
         $returnValue = $defaultValue;
         if (self::$configArray === null) {
@@ -24,14 +26,21 @@ class ConfigManager {
         $currentVal = self::$configArray;
         $foundKey = false;
         $keySegments = array_values(array_filter(explode('.', $key)));
-        foreach($keySegments as $idx => $currentKeySegment) {
-            if (!isset($currentVal[$currentKeySegment])) break;
+        foreach ($keySegments as $idx => $currentKeySegment) {
+            if (!isset($currentVal[$currentKeySegment])) {
+                break;
+            }
 
             $currentVal = $currentVal[$currentKeySegment];
-            if ($idx == count($keySegments) -1) $foundKey = true;
+            if ($idx == count($keySegments) - 1) {
+                $foundKey = true;
+            }
+
         }
 
-        if ($foundKey) $returnValue = $currentVal;
+        if ($foundKey) {
+            $returnValue = $currentVal;
+        }
 
         return $returnValue;
     }

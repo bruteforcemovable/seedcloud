@@ -27,6 +27,6 @@ class FriendCode
         list($principalId, $checksum) = array_values(unpack("V2", $rawFriendcodePayload));
 
         return self::CalculateChecksum($principalId) == $checksum &&
-            self::IsInValidPrincipalRange($principalId);
+        self::IsInValidPrincipalRange($principalId);
     }
 }
