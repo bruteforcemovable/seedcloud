@@ -5,3 +5,4 @@ database:
   database: bruteforcemovable
 web:
   trustedsecret: banana
+  part1dumper: https://part1dumper.bruteforcemovable.com

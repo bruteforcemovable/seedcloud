@@ -3,6 +3,7 @@
 namespace SeedCloud\Controllers;
 
 use SeedCloud\BaseController;
+use SeedCloud\ConfigManager;
 use SeedCloud\DatabaseManager;
 use SeedCloud\Validation\FriendCode;
 use SeedCloud\Validation\ID0;
@@ -15,7 +16,7 @@ class HomwController extends BaseController
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, 'http://bfmpart1dumper/getStatus.php?friendcode=' . $friendcode . '&id0=' . $id0);
+        curl_setopt($ch, CURLOPT_URL, ConfigManager::GetConfiguration('web.part1dumper') . '/getStatus.php?friendcode=' . $friendcode . '&id0=' . $id0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 1);
 
@@ -25,9 +26,9 @@ class HomwController extends BaseController
         return json_decode($response, true);
     }
 
-    public function resetPart1DumperState($id0, $friendcode)
+    public function resetPart1DumperState($friendcode)
     {
-        $part1MechaResponse = file_get_contents('http://bfmpart1dumper/resettimeout.php?fc=' . $friendcode);
+        $part1MechaResponse = file_get_contents(ConfigManager::GetConfiguration('web.part1dumper') . '/resettimeout.php?fc=' . $friendcode);
 
         return "done";
     }
@@ -51,7 +52,7 @@ class HomwController extends BaseController
             $results = $statement->fetchAll(\PDO::FETCH_ASSOC);
             if ($result !== false && count($results) === 1) {
                 $task = $results[0];
-                $okornah = $this->resetPart1DumperState($task['id0'], $task['friendcode']);
+                $this->resetPart1DumperState($task['friendcode']);
             }
             echo "ok";
             exit;
