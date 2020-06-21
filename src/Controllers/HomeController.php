@@ -203,7 +203,7 @@ class HomwController extends BaseController
                         exit;
                     }
 
-                    if (strlen($task['movable']) > 0) {
+                    if (strlen($task['keyY']) > 0) {
                         $statement = $dbCon->prepare('update seedqueue set state = 5 where taskId like :taskId');
                         $statement->bindParam('taskId', $task['taskId']);
                         $statement->execute();

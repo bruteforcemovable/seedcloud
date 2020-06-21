@@ -53,7 +53,7 @@ class BadgeManager
                 $sql = 'select * from minerbadges where minername = :minername';
                 $statement = $dbHandle->prepare($sql);
 		$statement->bindValue('minername', $minerName);
-                $result = $statement->execute();
+        $result = $statement->execute();
 		$badgeStates = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
 		$stateVarsMap = [];

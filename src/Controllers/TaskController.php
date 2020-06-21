@@ -11,22 +11,20 @@ class BotApiController extends BaseController
     public function getMovableAction()
     {
         if (isset($_REQUEST['task']) && strlen($_REQUEST['task']) == 32) {
-            $str = "data";
             $dbCon = DatabaseManager::GetHandle();
             $statement = $dbCon->prepare('select * from seedqueue where taskId like :taskId and state = 5');
             $statement->bindValue('taskId', $_REQUEST['task']);
             $result = $statement->execute();
             if ($result !== false) {
-                $str = base64_decode($statement->fetchAll(\PDO::FETCH_ASSOC)[0]['movable']);
+                $keyY = hex2bin($statement->fetchAll(\PDO::FETCH_ASSOC)[0]['keyY']);
             } else {
                 echo "There was a problem with your movable, please try again.";
                 exit;
             }
-            $str = 'SEED' . substr($str, 4, 284);
+            $str = 'SEED' . str_repeat("\x00", 288 - 4 - 16) . $keyY;
             header('Content-Disposition: attachment; filename="movable.sed"');
             header('Content-Type: text/plain'); # Don't use application/force-download - it's not a real MIME type, and the Content-Disposition header is sufficient
-            header('Content-Length: ' . strlen($str));
-            header('Connection: close');
+            header('Content-Length: 288');
             echo $str;
             exit;
         }
@@ -105,10 +103,9 @@ class BotApiController extends BaseController
                     echo "success";exit;
                 }
 
-                $statement = $dbCon->prepare('update seedqueue set state = 5, movable = :movable where taskId like :taskId');
+                $statement = $dbCon->prepare('update seedqueue set state = 5, keyY = :keyY where taskId like :taskId');
                 $statement->bindParam('taskId', $taskId);
-                $fileBase64 = base64_encode($fileContent);
-                $statement->bindParam('movable', $fileBase64);
+                $statement->bindParam('keyY', bin2hex($keyY));
                 $statement->execute();
 
                 if (isset($_REQUEST['minername']) && strlen($_REQUEST['minername']) > 1) {

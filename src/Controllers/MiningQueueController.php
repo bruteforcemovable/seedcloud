@@ -88,7 +88,7 @@ class MiningQueueController extends BaseController
         if ($result !== false) {
             echo "okay";
         }
-        $statement = $dbCon->prepare('update seedqueue set state = 5 where movable is not null and movable != \'\'');
+        $statement = $dbCon->prepare('update seedqueue set state = 5 where keyY is not null and keyY != \'\'');
         $result = $statement->execute();
         if ($result !== false) {
             echo "okay";
