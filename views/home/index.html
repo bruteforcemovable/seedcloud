@@ -1,0 +1,472 @@
+{% extends "layout.html" %}
+{% block status %}
+<span>{{ userCount }} in mining queue, </span> 
+<span>{{ miningCount }} currently mining, </span> 
+<span>{{ minersStandby }} idle miners, </span> 
+<span>{{ msCount }}+? success</span> 
+{% endblock %}
+{% block content %}
+
+<main class="container">
+    <br/>
+    {% if isUp == false and false %}
+    <div class="alert alert-danger">Seedhelper seems to be having issues. You may be stuck waiting for the bot for a while until the issue is fixed! Uploading
+        an existing part1 and having it mined should be operational. You should ask for a friend on the
+        <a href="https://discord.gg/C29hYvh">Nintendo Homebrew Discord</a> and then upload the part1 here or bruteforce it yourself.</div>
+    {% endif %}
+	
+	<div class="card-body"><div class="alert alert-danger">
+		<b>@ Miners running Nvidia or Intel Cards:</b> If you have setup your mining installation before the 11th of April, please update to 
+		<a href="https://github.com/deadphoenix8091/seedminer/releases/tag/v2.1.5"  rel="noreferrer" target="_blank">this seedminer release</a> which will improve mining performance by 2-3x on Nvidia GPUs and 20% on Intel GPUs.
+	</div><br>
+					
+    <div class="alert alert-info">If you have issues, try refreshing the page, pressing "Start again" below and asking for help on the
+        <a href="https://discord.gg/C29hYvh">Nintendo Homebrew Discord</a>.</div>
+    <div class="alert alert-warning">
+        Warning: <b>DO NOT </b>inject a <b>movable.sed obtained from here</b> into your nand. Your 3ds will no longer boot if you do. This movable.sed is only to be used for encrypting/decrypting savedata and dsiware. 
+	
+    </div>
+    <button id="cancelButton1" class="btn">Start again</button>
+	
+    <div id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button disabled class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Welcome!
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    <p>Welcome to bruteforcemovable.com! This service is supported by the people who run the bruteforce script! You should be following
+                        <a href="https://3ds.hacks.guide/">3ds.hacks.guide</a> to use this service. You may find it harder to get help if you aren't using
+                        this guide! To use this service,
+                    <b>type your Friend Code and your id0 in the box below.</b></p>
+                    <form class="request-form-main">
+                        <div class="form-group">
+                            <label for="friendCode"><b>Your friend code</b></label>
+                            <input required class="form-control" id="friendCode" maxlength="15" type="text" placeholder="123456789012" max="549755813887">
+                            <a id="uploadp1" style="display: none" href="#">or upload a movable_part1.sed</a>
+                            <input type="file" style="display:none" id="p1file" accept=".sed" />
+                            <input type="hidden" id="part1b64" />
+                        </div>
+                        <div class="form-group">
+                            <label for="id0"><b>Your ID0</b></label>
+                            <a href="#" data-toggle="tooltip" data-html="true" title="You can find your ID0 in the Nintendo 3DS folder on your SD card. It is the random folder name inside that folder but <b>not the folder inside that!</b> <br /><img src='https://i.imgur.com/1AeECFF.png' />">(how to get)</a>
+                            <input required type="text" class="form-control" id="id0" maxlength="32" pattern="[a-fA-F0-9]{32}" placeholder="52f10c83610ebca1a059c0bae8255eb">
+                        </div>
+
+                        <button id="beginButton" class="btn btn-primary btn-success">Go</button>
+
+                        <div id="fcError" class="alert alert-danger" role="alert" style="display: none;">
+                            Your Friend Code, Part1 or ID0 is incorrect. Type it correctly, the ID0 in lowercase and the Friend Code without dashes.
+                        </div>
+                        <div id="fcWarning" class="alert alert-warning" role="alert" style="display: none;">
+                            Your ID0 appears to be an ID1. The ID0 is the name of the folder inside the Nintendo 3DS folder,
+                            <b>not the folder inside that!</b> Check your ID0 is correct and try again. If you are having issues
+                            finding your ID0, ask the
+                            <a href="https://discord.gg/C29hYvh">Nintendo Homebrew Discord</a>.
+                            <br />
+                            <img src="https://i.imgur.com/1AeECFF.png" />
+                        </div>
+                    </form>
+                    <div class="progress" id="fcProgress" style="display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 100%">Waiting...</div>
+                    </div>
+                </div>
+            </div>
+        </div><br/><br/>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button disabled class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Step 1: Add the bot to your 3ds friend list
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+				<!---->
+				<div class="alert alert-danger">
+				<b>Important:</b> Using the 3DS friends list, register <b><span class="js-friendcode"></span></b> as a new online friend. <br>See Nintendo instructions for more assistance with adding friends 
+				<a href="https://www.nintendo.co.uk/Support/Nintendo-3DS-2DS/FAQ/Hardware/How-do-I-register-friends-/How-do-I-register-friends--242795.html" rel="noreferrer" target="_blank">here</a>.
+                        
+                    </div>
+                    It is connected to this website and will automatically retrieve your movable_part1 when you
+                    add it to your friendlist. Simply add it back and wait for it to process your friend code. If nothing on this website
+                    changes after you add the bot, refresh the page.<br><br>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 100%">Waiting...</div>
+                    </div>
+                </div>
+                <div class="card-body js-timeout" style="display: none">
+                    <div class="alert alert-danger">
+                        <strong>Important!</strong> Friend exchange timed out. Please make sure you are ready and your 3ds is online before resetting. When you are given a bot friend code, please follow the instructions to add it to your 3ds friend list. Please also note that you <i>can</i> get a different friendcode this time!
+                    </div>
+                    <div class="alert alert-danger" role="alert">If you are ready <button class="btn btn-primary" onclick="resetfc();"> click here to reset </button></div>
+                </div>
+                <div class="card-body js-lockout" style="display: none">
+                    <div class="alert alert-danger">
+                        <strong>Important!</strong> You have been locked out of the automated part1 dumper system because you failed to add the bot to your 3ds as your friend using the 3ds friend list 3 times.
+                    </div>
+                    <div class="alert alert-danger">
+						Please contact us on the <a href="https://discord.gg/MWxPgEp">Nintendo Homebrew Discord</a> for assistance.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button disabled class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                            aria-controls="collapseThree">
+                        Step 2: Bruteforce
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                    <b>If you have your own GPU</b>, then
+                    <a href="#" id="downloadPart1" class="disableButton">download movable_part1.sed</a> and go back to the guide and bruteforce the movable.sed yourself. Otherwise,
+                    <b>press Continue</b> if you need someone else to bruteforce it.<br/>
+                    <button id="continue" class="btn btn-primary btn-success">Continue</button>
+                    <!--<a href="#" id="downloadPart12" class="disableButton btn">Download movable_part1.sed</a>-->
+                    <button id="cancelButton2" class="btn">Do another device</button>
+                    <p style="color: red; display: none;">The bruteforce client is currently disabled while the rest of the service is disabled. Ask on the Nintendo Homebrew Discord for a friend to bruteforce if you need it or follow <a href="https://jisagi.github.io/SeedminerGuide/seedminerSelf/#section2">this guide</a> to bruteforce it yourself.</p>
+                    <p id="disableMessage">If you are bruteforceing with your own GPU, you don't need to press this button! If you downloaded your
+                        part1 on accident or for another reason, click
+                        <a id="enableButton">here</a> to turn it on again.</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingFour">
+                <h5 class="mb-0">
+                    <button disabled class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                            aria-controls="collapseFour">
+                        Step 3: Wait
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                <div class="card-body">
+                    <b>Wait</b> for the bruteforce to complete. Feel free to leave the website running in the background or
+                    even close it. This may take up to an hour, but it usually lasts about 30 minutes and sometimes less.
+                    Don't worry if your GPU is not powerful because this is happening on another computer. While you wait,
+                    please check that your ID0 is correct and cancel the job if it is not, or you will be waiting forever!
+                    If you have been waiting a while and nothing has happened, try refreshing the page
+                    <br /> ID0:
+                    <span id="id0Fill"></span>
+                    <br />
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="bfProgress" aria-valuenow="100"
+                             aria-valuemin="0" aria-valuemax="100" style="width: 100%">Waiting...</div>
+                    </div>
+                    <button id="cancelButton" class="btn btn-danger">Cancel</button> If you cancel the bruteforce, you will have to restart the process!
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingFive">
+                <h5 class="mb-0">
+                    <button disabled class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false"
+                            aria-controls="collapseFive">
+                        Step 4: Done!
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                <div class="card-body">
+                    <a href="#" id="downloadMovable">Download movable.sed</a> and go back to the guide to inject your DSiWare. Thanks to the people who run
+                    the bruteforcing script who make this service possible!
+                    <br>
+                    <a href="#" class="btn btn-primary btn-success" id="downloadMovable2">Download movable.sed</a>
+                    <button id="cancelButton3" class="btn">Do another device</button>
+
+                    <div class="alert alert-danger">
+                        <strong>Attention!</strong> If you entered your friend code and id0 and are now at step 4, download your movable.sed and continue. You do not need to do anything more with the bot friend code, movable_part1.sed, Python, or the command line. movable.sed is the final product and requires no further processing. If the guide you are reading suggests you install Python or enter commands into a command prompt, skip that specific section.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br/><br/>
+    <div id="accordion2">
+	
+	<div class="card">
+            <div class="card-header" id="headingX">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseX" aria-expanded="false" aria-controls="collapseX">
+                        Mine for BruteforceMovable
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseX" class="collapse" aria-labelledby="headingX" data-parent="#accordion2">
+                <div class="card-body"><div class="alert alert-danger">
+                        <b>@ Miners running Nvidia or Intel Cards:</b> If you have setup your mining installation before the 11th of April, please update to 
+						<a href="https://github.com/deadphoenix8091/seedminer/releases/tag/v2.1.5"  rel="noreferrer" target="_blank">this seedminer release</a> which will improve mining performance by 2-3x on Nvidia GPUs and 20% on Intel GPUs.
+                    </div><br>
+                    BruteforceMovable is powered by the people who run a special script and lend their GPU time to the service. If you have a powerful
+                    GPU then please lend it to the service when you aren't using it. Please don't run the script on integrated
+                    graphics as it will immensely slow the process for some users! Here's how to do that yourself:
+                    <ol>
+                        <li>Download and install
+                            <a href="https://www.python.org/downloads/"  rel="noreferrer" target="_blank">Python 3 (not 2)</a>
+                        </li>
+                        <li>Download
+                            <a href="https://github.com/deadphoenix8091/seedminer/releases/tag/v2.1.5"  rel="noreferrer" target="_blank">seedminer</a> and extract the zip (make sure you are using exactly this version of seedminer!)</li>
+                        <li>Download
+                            <a href="https://github.com/deadphoenix8091/bfm_autolauncher/releases"  target="_blank">the latest version of bfm_seedminer_autolauncher.py</a>.
+                        </li>
+                        <li>Copy bfm_seedminer_autolauncher.py to the extracted seedminer folder.</li>
+                        <li>Open an admin command prompt by opening Start, typing cmd and pressing Ctrl+Shift+Enter. Type "py -3
+                            -m pip install requests" without the quotes and press enter.</li>
+                        <li>Shift+right click in the seedminer folder, press "Open command window here" or "Open Windows Powershell
+                            here" and type "py -3 bfm_seedminer_autolauncher.py" to start working. The script will test your GPU
+                            for adequate power to help keep the service fast. Press Ctrl+C inside the command window to stop
+                            working.</li> 
+                    </ol>
+                </div>
+            </div>
+        </div>
+		<!--<div class="card">
+            <div class="card-header" id="headingLB">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseLB" aria-expanded="false" aria-controls="collapseLB">
+                        Leaderboard
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseLB" class="collapse" aria-labelledby="headingLB" data-parent="#accordion2">
+				<ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="current-month-tab" data-toggle="tab" href="#currentMonthTabContent" role="tab" aria-controls="loginTabContent" aria-selected="true">Current Month</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="last-month-tab" data-toggle="tab" href="#lastMonthTabContent" role="tab" aria-controls="registerTabContent" aria-selected="false">Last Month</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="overall-tab" data-toggle="tab" href="#overallTabContent" role="tab" aria-controls="registerTabContent" aria-selected="false">All Time</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="currentMonthTabContent" role="tabpanel" aria-labelledby="current-month-tab">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Miner Name</th>
+									<th scope="col">Score</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for miner in minerScoresCurrentMonth %}
+									<tr>
+									<th scope="row">{{ loop.index }}</th>
+									<td>{{ miner.username }} <a href="/minerprofile/{{ miner.username }}">(View Profile)</a></td>
+									<td>{{ miner.score }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="lastMonthTabContent" role="tabpanel" aria-labelledby="last-month-tab">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Miner Name</th>
+									<th scope="col">Score</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for miner in minerScoresLastMonth %}
+									<tr>
+									<th scope="row">{{ loop.index }}</th>
+									<td>{{ miner.username }} <a href="/minerprofile/{{ miner.username }}">(View Profile)</a></td>
+									<td>{{ miner.score }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="overallTabContent" role="tabpanel" aria-labelledby="overall-tab">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Miner Name</th>
+									<th scope="col">Score</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for miner in minerScores %}
+									<tr>
+									<th scope="row">{{ loop.index }}</th>
+									<td>{{ miner.username }} <a href="/minerprofile/{{ miner.username }}">(View Profile)</a></td>
+									<td>{{ miner.score }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+					
+					
+                </div>
+            </div>
+        </div>-->
+        <div class="card">
+            <div class="card-header" id="headingY">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseY" aria-expanded="false" aria-controls="collapseY">
+                        Credits
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseY" class="collapse" aria-labelledby="headingY" data-parent="#accordion2">
+                <div class="card-body">
+                    bruteforcemovable.com is developed by DeadPhoenix, for part1 dumping it uses the service provided by RandalHoffman ~thank you very much for that~. Essentially it is just a rewrite of Seedhelper using PHP so here are the credits for Seedhelper:<br/><br/>
+
+                    Seedhelper is developed by
+                    <a href="https://github.com/figgyc" rel="noreferrer" target="_blank">figgyc</a> and is
+                    <a href="https://github.com/figgyc/seedhelper2" rel="noreferrer" target="_blank">open source</a>. Seedhelper has been possible thanks to many people:<br/>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/Pirater12" rel="noreferrer" target="_blank">@Pirater12</a> for reverse engineering frd:a and making httpc_curl to make the friend code bot
+                            possible</li>
+                        <li>
+                            <a href="https://github.com/zoogie" rel="noreferrer" target="_blank">@zoogie</a> for creating the seedminer applications and finding the vulnerability</li>
+                        <li>
+                            <a href="https://github.com/Jisagi" rel="noreferrer" target="_blank">@Jisagi</a> for creating the seedminer guide</li>
+                        <li>
+                            <a href="https://github.com/jason0597" rel="noreferrer" target="_blank">@jason0597</a>,
+                            <a href="https://github.com/knight-ryu12" rel="noreferrer" target="_blank">@knight-ryu12</a>,
+                            <a href="https://github.com/saibotu" rel="noreferrer" target="_blank">@saibotu</a>, and anyone who has used the service for testing and finding bugs!</li>
+                        <li>All Seedhelper miners</li>
+                    </ul><br/>
+					Additional BruteforceMovable Credits:
+					<ul>
+					<li>
+                            <a href="https://github.com/Mike15678" rel="noreferrer" target="_blank">@Mike15678</a> for his work on the autolauncher script and additions to seedminer and bfcl to make mining more efficient</li>
+                        </li>
+					<li>
+                            <a href="#">@RandalHoffman</a> for providing the part1dumper service</li>
+                        </li>
+					<li>
+                            All BruteforceMovable miners and everyone who helped out testing and improving the site.
+                        </li>
+					</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</main>
+
+<div class="modal fade" id="vguideModal" tabindex="-1" role="dialog" aria-labelledby="vguideModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="vguideModalLabel">You seem to come from a Video Guide</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	<p><b>Why you should not use video guides:</b></p>
+	<ul>
+		<li>They get outdated quickly</li>
+		<li>Tough to update and give assistance for</li>
+		<li>Can be misinformative and dangerous for the console</li>
+	</ul>
+	<p><b>Recommended Solution</b></p>
+	<p>Read a trusted written tutorial. We recommend <a href="https://3ds.hacks.guide" target="_blank">3ds.hacks.guide</a>, If you require help with any of the steps,
+		come visit us on <a href="https://discord.gg/C29hYvh" target="_blank">Discord</a> and we will help you through the process</p> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="supportModal" tabindex="-1" role="dialog" aria-labelledby="supportModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="supportModalLabel">Support the Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>BruteforceMovable is run by normal human beings that spend their free time helping other people getting access to Homebrew on their systems.</p>
+		<p>If you would like to support this project you can do this in multiple ways, no matter how small the contribution it is greatly appreciated and helps out immensely.</p>
+		<p>Of course none of this is necessary, you will still get the same level of assistance. (And it will also not grant you any special privileges.)</p>
+		<p>Here are some ways to help out:</p>
+		<ul>
+			<li>You can send us some money using our <a href="https://paypal.me/bruteforcemovable" rel="noreferrer" target="_blank">PayPal.me</a> link. It would definitely put a smile on our faces.
+			<br></li>
+			<li>Join the miners! If you ever felt like your gpu is getting bored, check out the "Mine for BruteforceMovable"-Section on the site. 
+			<sub>We got a leaderboard! Nothing is better than a little competition :) </sub>
+			</li>
+		</ul>
+		<p><sub>Even if you can't do any of the above, we also appreciate a little "thank you guys" message in the Discord.</sub></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="unmineableModal" tabindex="-1" role="dialog" aria-labelledby="unmineableModalTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="unmineableModalTitle">We were unable to successfully complete your bruteforce request. :`(</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<p>
+			To resolve this, please first double check your id0. If there was more than one 32-character folder in your "Nintendo 3DS" folder, please be sure you followed the process to obtain the correct id0. </p>
+			<p>If you are sure your id0 was correct, you will need to format your console from <span style="color: white">System Settings > Other Settings > System Format</span> in order to use *miner methods. Once your system is formatted, you should begin the whole process again.
+Formatting your system will remove <b>all</b> of your user data, including installed <b>digital games, saves</b>, NNID details, themes and other non-system files. 
+Once you log back into your NNID, you will be able to redownload any purchases you have made, including games and themes. 
+You can <b>NOT</b> recover your digital game saves unless you have an existing homebrew entry point. <sub>If you do not know what this is, you do not have one.</sub
+</p>
+<p>Your only other option if you wish to preserve your data is NTRBoot, which requires a compatible flashcart.</p>
+<p>If you require help with this information, please feel free to ask in the assistance channels on the Nintendo Homebrew Discord server.
+			</p>
+			<sub>Please note that there is no 100% guarantee that it will be mineable after the system format. While it works on most systems, there is still a possibility that you will need to resort to other methods.</sub>
+		  </div>
+		  
+		</div>
+	  </div>
+	</div> 
+	</div>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/script.js?v2.1.9"></script>
+<script>
+jQuery(function () {
+if (document.referrer.match(/^https?:\/\/([^\/]+\.)?youtube\.com(\/|$)/i) || 
+ document.referrer.match(/^https?:\/\/([^\/]+\.)?jacksorrell\.tv(\/|$)/i)) {
+  jQuery('#vguideModal').modal();
+}
+
+});
+</script>
+{% endblock %}

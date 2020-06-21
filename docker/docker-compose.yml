@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+  seedcloud:
+    image: bruteforcemovable/seedcloud:latest
+    volumes:
+      - "./htdocs:/app"
+    links:
+      - part1dumper
+      - sql
+    volumes:
+      - "./htdocs:/app"
+      - "./site.conf:/etc/nginx/conf.d/default.conf"
+  part1dumper:
+    image: bruteforcemovable/part1dumperbackend:latest
+    ports:
+      - 81:80
+    links:
+      - bfmsql
+  friendbot:
+    image: bruteforcemovable/friendbot:latest
+    volumes:
+      - "./friendbot:/usr/src/app"
+    restart: always
+  bfmsql:
+    container_name: flask_mysql
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'liK0sDLA'
+    volumes:
+      - ./mysql:/var/lib/mysql

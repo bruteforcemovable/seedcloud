@@ -1,0 +1,24 @@
+{% extends "layout.html" %} {% block status %} Minerprofile View {% endblock %} {% block content %}
+
+<main class="container">
+    <br/>
+	<div class="card">
+		<div class="card-header"><h5>Miner Profile of: {{ minerName }}</h5></div>
+		<ul class="list-group list-group-flush">
+		{% for badge in badges %}
+			<li class="list-group-item"><b>{{ badge.title }}</b> <sub>(Current Level: {{ badge.currentLevel }})</sub>
+				<p>{{ badge.description }}<br>
+				Next Level Progress: {{ badge.badgeProgressText }}</p>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ badge.badgeProgressPercentage * 100 }}%;" aria-valuenow="{{ badge.badgeProgressPercentage }}" aria-valuemin="0" aria-valuemax="1"></div>
+				</div>
+			</li>
+		{% endfor %}
+		</ul>
+	</div>	
+    
+</main>
+
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+{% endblock %}

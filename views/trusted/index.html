@@ -1,0 +1,46 @@
+{% extends "layout.html" %} {% block status %} Internal Support View {% endblock %} {% block content %}
+
+<main class="container">
+    <br/>
+	<div class="card">
+		<div class="card-header"><h5>Internal Support View</h5></div>
+		<div class="card-body">
+			<form action="/trusted?{{urlsecret}}" method="post">
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon1">ID0 or FriendCode</span>
+				</div>
+				<input type="text" class="form-control" name="searchterm" placeholder="ID0 or FriendCode" value="{{searchterm}}">
+				<div class="input-group-append">
+					<button class="btn btn-secondary" type="submit">Search</button>
+				</div>
+			</div>
+			</form>
+		</div>
+		<ul class="list-group list-group-flush">
+		{% for result in results %}
+			<li class="list-group-item"><b>TaskId: {{ result.taskId }}</b>
+				<p>FriendCode: {{ result.friendcode }}<br>ID0: {{ result.id0 }}
+				</p>
+{% if result.part1b64 %}
+<a href="/getPart1?task={{ result.taskId }}" target="_blank">
+<button class="btn btn-primary">Get Part1</button></a>
+{% else %}
+No Part1 Available | 
+{% endif %}	
+{% if result.state == 5 %}			
+				<a href="/get_movable?task={{ result.taskId }}" target="_blank">
+<button class="btn btn-primary">Get Movable</button></a>
+{% else %}
+No Movable Available
+{% endif %}				
+			</li>
+		{% endfor %}
+		</ul>
+	</div>	
+    
+</main>
+
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+{% endblock %}

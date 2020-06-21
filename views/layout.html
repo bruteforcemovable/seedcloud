@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Bruteforce Movable</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous">
+    <style>
+        .form-control::-webkit-input-placeholder, .form-control::-moz-placeholder, .form-control:-ms-input-placeholder, .form-control:-moz-placeholder, .form-control::placeholder, .form-control:placeholder, .form-control::placeholder {
+            color: lightgrey !important;
+        }
+    </style>
+    <meta name="theme-color" content="#2a9fd6" />
+	<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAATeu0AAa/fwAX45wAh/XOAK2c/wCMe/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIiIiIiIAACMzMzMzMyACQRERERETMgJBEREREREyAkERERERETICQRERERERMgJBEREREREyAkEREAARETICRVEBEQFVMgJFUREREVUyAkABEiIRADICQAEgACEAMgJERCAAIREyACIiAGACIiAAAAAGZgAAAAAAAAYGAAAADABwAAgAMAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAOBAAADgQAAhsMAAPx/AAD9fwAA" rel="icon" type="image/x-icon" />
+
+</head>
+
+<body>
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary" id="navbar" style="border: none">
+    <a class="navbar-brand" href="/">Bruteforce Movable</a>
+    <span id="statusText" class="navbar-text ml-auto">{% block status %}{% endblock %}</span>
+</nav>
+{% block content %}
+
+{% endblock %}
+
+</body>
+
+</html>
