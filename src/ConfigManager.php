@@ -2,12 +2,13 @@
 
 namespace SeedCloud;
 
+use Exception;
 use Symfony\Component\Yaml\Yaml;
 
 class ConfigManager
 {
     private static $configArray = null;
-    const CONFIGURATION_FILE_PATH = __DIR__ . '/../config.yaml';
+    const CONFIGURATION_FILE_PATH = __DIR__ . '/../config.yml';
 
     public static function GetConfiguration($key, $defaultValue = '')
     {
@@ -15,9 +16,9 @@ class ConfigManager
         $returnValue = $defaultValue;
         if (self::$configArray === null) {
             //Load config from yaml file
-
-            if (file_exists(self::CONFIGURATION_FILE_PATH)) {
-                self::$configArray = Yaml::parseFile(self::CONFIGURATION_FILE_PATH);
+            
+            if (file_exists(realpath(self::CONFIGURATION_FILE_PATH))) {
+                self::$configArray = Yaml::parseFile(realpath(self::CONFIGURATION_FILE_PATH));
             } else {
                 self::$configArray = [];
             }

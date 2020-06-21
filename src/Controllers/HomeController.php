@@ -8,7 +8,7 @@ use SeedCloud\DatabaseManager;
 use SeedCloud\Validation\FriendCode;
 use SeedCloud\Validation\ID0;
 
-class HomwController extends BaseController
+class HomeController extends BaseController
 {
     protected $viewFolder = 'home';
 
