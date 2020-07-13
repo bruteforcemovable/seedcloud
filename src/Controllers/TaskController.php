@@ -6,7 +6,7 @@ use SeedCloud\BaseController;
 use SeedCloud\DatabaseManager;
 use SeedCloud\Miner;
 
-class BotApiController extends BaseController
+class TaskController extends BaseController
 {
     public function getMovableAction()
     {
