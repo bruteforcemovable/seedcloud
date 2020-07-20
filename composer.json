@@ -1,5 +1,6 @@
 {
     "name": "bruteforcemovable/seedcloud",
+    "description": "Distributed bruteforcing of 3ds encryption keys",
     "type": "project",
     "require": {
         "twig/twig": "^2.0",
