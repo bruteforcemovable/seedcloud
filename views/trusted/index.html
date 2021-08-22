@@ -26,6 +26,9 @@
 <a href="/getPart1?task={{ result.taskId }}" target="_blank">
 <button class="btn btn-primary">Get Part1</button></a>
 {% else %}
+<a target="_blank" href="http://part1dumper.nintendohomebrew.com/unlock.php?fc={{ result.friendcode }}&id0={{ result.id0 }}">
+    <button class="btn btn-primary">Unlock</button>
+</a> | 
 No Part1 Available | 
 {% endif %}	
 {% if result.state == 5 %}			
